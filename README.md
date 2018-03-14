@@ -1,8 +1,9 @@
 # Golang basic project
 
 ## spec
-- dep
-- Makefile
+- [Golang](https://golang.org/) - usign [GVM](https://github.com/moovweb/gvm)
+- [dep](https://github.com/golang/dep)
+- [Makefile](https://wiki.openoffice.org/wiki/MakeFile)
 
 ## build & run
 
@@ -15,6 +16,10 @@ $ ./bin/hello
 ```bash
 $ make install
 ```
+- check : format, style, lint
+```bash
+$ make check
+```
 - build
 ```bash
 $ make build
@@ -25,7 +30,7 @@ $ make run
 ```
 
 ## Makefile
-- usage go command : go build, go install, dep, gometalinter, ginkgo, rm
+- usage go command : go build, go install, dep, gometalinter, ginkgo, rm, gofmt
 - make command : all, lint, install, build, build-all, run, run-cont, clean, test, test-cont
 - go build options : -ldflags, -i, -o, -v
     - -i : flag installs the packages that are dependencies of the target.

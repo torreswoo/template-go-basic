@@ -92,13 +92,13 @@ run-cont: build
 		-graceful-kill=true
 
 clean:
-	@echo "[$(TAG)] ($(shell TZ=UTC date -u '+%H:%M:%S')) - cleaning"
+	@echo "[$(TAG)] ($(shell TZ=UTC date -u '+%Y-%m-%dT%H:%M:%SZ')) - cleaning"
 	find . -type f -name '*.coverprofile' -exec rm {} +
 	$(RM) ${BIN_DIR}/
 	$(RM) vendor/$(IMPORTPATH)
 
 test:
-	@echo "[$(TAG)] ($(shell TZ=UTC date -u '+%H:%M:%S')) - testing"
+	@echo "[$(TAG)] ($(shell TZ=UTC date -u '+%Y-%m-%dT%H:%M:%SZ')) - testing"
 	$(GOTEST) $(GOTEST_OPT)
 
 test-cont:
@@ -106,15 +106,16 @@ test-cont:
 	$(GOTEST) watch $(GOTEST_OPT)
 
 lint:
-	@echo "[$(TAG)] ($(shell TZ=UTC date -u '+%H:%M:%S')) - linting"
+	@echo "[$(TAG)] ($(shell TZ=UTC date -u '+%Y-%m-%dT%H:%M:%SZ')) - linting"
 	@$(GOLINT) --vendor --errors ./... \
 		--skip=internal/mock --skip=pkg \
 		--enable=unparam --enable=nakedret --enable=staticcheck
 style:
-	@echo "[$(TAG)] ($(shell TZ=UTC date -u '+%H:%M:%S')) - checking code style"
+	@echo "[$(TAG)] ($(shell TZ=UTC date -u '+%Y-%m-%dT%H:%M:%SZ')) - checking code style"
 	@! $(GOFMT) -d $(shell find . -path ./vendor -prune -o -name '*.go' -print) | grep '^'
 
 format:
-	@echo "[$(TAG)] ($(shell TZ=UTC date -u '+%H:%M:%S')) - formatting code"
+	@echo "[$(TAG)] ($(shell TZ=UTC date -u '+%Y-%m-%dT%H:%M:%SZ')) - formatting code"
 	@$(GOCMD) fmt $(GO_FILES)
+
 check: format style lint
