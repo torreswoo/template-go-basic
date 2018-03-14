@@ -31,9 +31,9 @@ BUILDTIME	= $(shell TZ=UTC date -u '+%Y-%m-%dT%H:%M:%SZ')
 IMPORTPATH	= github.com/torreswoo/hello
 GITSHA		= $(shell git rev-parse HEAD)
 LDFLAGS		= -ldflags=" \
-				-X ${IMPORTPATH}/config.GitHash=${GITSHA} \
-				-X ${IMPORTPATH}/config.BuildTime=${BUILDTIME} \
-				-X ${IMPORTPATH}/config.Version=${VERSION}"
+				-X ${IMPORTPATH}/configs.GitHash=${GITSHA} \
+				-X ${IMPORTPATH}/configs.BuildTime=${BUILDTIME} \
+				-X ${IMPORTPATH}/configs.Version=${VERSION}"
 
 # build commands
 
@@ -54,7 +54,8 @@ install:
 build: clean
 	$(GOBUILD) \
 		$(LDFLAGS) \
-		-i -o ${BIN} \
+		-i \
+		-o ${BIN} \
 		-v ${MAIN}
 
 build-all:
