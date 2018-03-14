@@ -1,28 +1,28 @@
 package configs
 
-import(
+import (
 	"time"
 )
 
 var (
-	Version = "undefined"
+	Version   = "undefined"
 	BuildTime = "undefined"
-	GitHash = "undefined"
-	Started = time.Now().UTC().Format(time.RFC3339)
+	GitHash   = "undefined"
+	Started   = time.Now().UTC().Format(time.RFC3339)
 )
 
 type Flag struct {
-	Version string
+	Version   string
 	BuildTime string
-	GitHash string
-	Started string
+	GitHash   string
+	Started   string
 }
 
-func GetFlag() Flag{
+func GetFlag() Flag {
 	return Flag{
-		Version:Version,
-		BuildTime:BuildTime,
-		GitHash:GitHash,
-		Started:Started,
+		Version:   Version,
+		BuildTime: BuildTime,
+		GitHash:   GitHash,
+		Started:   Started,
 	}
 }

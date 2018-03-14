@@ -2,12 +2,13 @@ package main
 
 import (
 	"fmt"
-	"github.com/torreswoo/hello/configs"
 	"github.com/go-kit/kit/log"
+	"github.com/torreswoo/hello/configs"
 	"os"
 )
-func main(){
-	fmt.Println("Hello world");
+
+func main() {
+	fmt.Println("Hello world")
 
 	// ENV - get config/ Flag
 	flag := configs.GetFlag()
