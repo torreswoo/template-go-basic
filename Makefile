@@ -7,16 +7,13 @@ BIN			= ${BIN_DIR}/${APP}
 MAIN		= ${CMD_DIR}/${APP}/main.go
 TAG			= make
 
-
 # build options
-VERSION		= 0.0.1
+#VERSION		= 0.0.1
 BUILDTIME	= $(shell TZ=UTC date -u '+%Y-%m-%dT%H:%M:%SZ')
 IMPORTPATH	= github.com/torreswoo/hello
 GITSHA		= $(shell git rev-parse HEAD)
-LDFLAGS		= -ldflags=" \
-				-X ${IMPORTPATH}/configs.GitHash=${GITSHA} \
-				-X ${IMPORTPATH}/configs.BuildTime=${BUILDTIME} \
-				-X ${IMPORTPATH}/configs.Version=${VERSION}"
+LDFLAGS 	= $(shell govvv -flags -pkg $(shell go list ./internal/pkg/config))
+
 GOARCH  = amd64
 GOOS    = $(OS)
 ifeq ($(GOOS),)
@@ -33,6 +30,7 @@ GOGET		= $(GOCMD) get -u -v
 GOBUILD		= GOOS=$(GOOS) GOARCH=$(GOARCH) $(GOCMD) build
 GOINSTALL	= $(GOCMD) install
 GODEP		= dep
+GOX			= gox
 GOFMT 		= gofmt
 GOLINT 		= gometalinter
 GOTEST		= ginkgo
@@ -45,18 +43,19 @@ all: install lint build-all test
 
 $(APP):
 	@$(eval TARGET := $@)
-	@echo "[$(TAG)] ($(shell TZ=UTC date -u '+%H:%M:%S')) - building app: $(TARGET)"
+	@echo "[$(TAG)] ($(shell TZ=UTC date -u '+%Y-%m-%dT%H:%M:%SZ')) - building app: $(TARGET)"
 
 prepare:
-	@echo "[$(TAG)] ($(shell TZ=UTC date -u '+%H:%M:%S')) - installing prerequisites"
+	@echo "[$(TAG)] ($(shell TZ=UTC date -u '+%Y-%m-%dT%H:%M:%SZ')) - installing prerequisites"
 	# [install] go tools
 	$(GOGET) github.com/onsi/ginkgo/ginkgo			# for test
-	$(GOGET) github.com/franciscocpg/gox 			# for cross compile
+	$(GOGET) github.com/mitchellh/gox	 			# for cross compile
 	$(GOGET) github.com/githubnemo/CompileDaemon 	# for reload
 	$(GOGET) github.com/alecthomas/gometalinter 	# for lint
+	$(GOGET) github.com/ahmetb/govvv				# for build wrapper
 
 install:
-	@echo "[$(TAG)] ($(shell TZ=UTC date -u '+%H:%M:%S')) - installing / updating dependencies"
+	@echo "[$(TAG)] ($(shell TZ=UTC date -u '+%Y-%m-%dT%H:%M:%SZ')) - installing / updating dependencies"
 	# [install] go lint install & update
 	$(GOLINT) --install --update --force
 
@@ -66,14 +65,14 @@ install:
 
 build: clean $(APP)
 	$(GOBUILD) \
-		$(LDFLAGS) \
+		-ldflags="$(LDFLAGS)" \
 		-i \
 		-o ${BIN_DIR}/${APP} \
 		-v ${MAIN}
 
 build-all:
-	gox -verbose \
-		$(LDFLAGS) \
+	$(GOX) -verbose \
+		-ldflags=$(LDFLAGS) \
 		-os="linux darwin windows freebsd openbsd netbsd" \
 		-arch="amd64 386 armv5 armv6 armv7 arm64" \
 		-osarch="!darwin/arm64" \
@@ -81,7 +80,7 @@ build-all:
 		${MAIN}
 
 run:
-	@echo "[$(TAG)] ($(shell TZ=UTC date -u '+%H:%M:%S')) - running app: $(APP)"
+	@echo "[$(TAG)] ($(shell TZ=UTC date -u '+%Y-%m-%dT%H:%M:%SZ')) - running app: $(APP)"
 	${BIN_DIR}/${APP}
 
 run-cont: build
