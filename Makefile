@@ -1,6 +1,23 @@
+# application info
+APP			= hello
+BIN_DIR		= bin
+CMD_DIR		= cmd
+VENDOR_DIR	= vendor
+BIN			= ${BIN_DIR}/${APP}
+MAIN		= ${CMD_DIR}/${APP}/main.go
+
+
+# build options
+VERSION		= 0.0.1
+BUILDTIME	= $(shell TZ=UTC date -u '+%Y-%m-%dT%H:%M:%SZ')
+IMPORTPATH	= github.com/torreswoo/hello
+GITSHA		= $(shell git rev-parse HEAD)
+LDFLAGS		= -ldflags=" \
+				-X ${IMPORTPATH}/configs.GitHash=${GITSHA} \
+				-X ${IMPORTPATH}/configs.BuildTime=${BUILDTIME} \
+				-X ${IMPORTPATH}/configs.Version=${VERSION}"
 GOARCH  = amd64
 GOOS    = $(OS)
-
 ifeq ($(GOOS),)
   ifeq ($(shell  uname -s), Darwin)
     GOOS	= darwin
@@ -9,12 +26,7 @@ ifeq ($(GOOS),)
   endif
 endif
 
-APP			= hello
-MAIN		= cmd/hello/main.go
-BIN			= bin/${APP}
-VENDOR_DIR	= vendor
-
-# command
+# go command
 GOCMD		= go
 GOGET		= $(GOCMD) get -u -v
 GOBUILD		= GOOS=$(GOOS) GOARCH=$(GOARCH) $(GOCMD) build
@@ -25,18 +37,7 @@ GOTEST		= ginkgo
 GOTEST_OPT	= -r -p -v -cover
 RM			= rm -rf
 
-# build flags
-VERSION		= 0.0.1
-BUILDTIME	= $(shell TZ=UTC date -u '+%Y-%m-%dT%H:%M:%SZ')
-IMPORTPATH	= github.com/torreswoo/hello
-GITSHA		= $(shell git rev-parse HEAD)
-LDFLAGS		= -ldflags=" \
-				-X ${IMPORTPATH}/configs.GitHash=${GITSHA} \
-				-X ${IMPORTPATH}/configs.BuildTime=${BUILDTIME} \
-				-X ${IMPORTPATH}/configs.Version=${VERSION}"
-
-# build commands
-
+# make commands
 all: install lint build-all test
 
 lint:
@@ -44,11 +45,16 @@ lint:
 	$(GOLINT) --vendor --errors
 
 install:
-	$(GOGET) github.com/onsi/ginkgo/ginkgo # for test
-	$(GOGET) github.com/franciscocpg/gox # for cross compile
-	$(GOGET) github.com/githubnemo/CompileDaemon # for reload
-	$(GOGET) github.com/alecthomas/gometalinter # for lint
+	# [install] go tools
+	$(GOGET) github.com/onsi/ginkgo/ginkgo			# for test
+	$(GOGET) github.com/franciscocpg/gox 			# for cross compile
+	$(GOGET) github.com/githubnemo/CompileDaemon 	# for reload
+	$(GOGET) github.com/alecthomas/gometalinter 	# for lint
+
+	# [install] go lint install & update
 	$(GOLINT) --install --update --force
+
+	# [install] dep, Gopkg.toml
 	$(GODEP) ensure
 
 build: clean
